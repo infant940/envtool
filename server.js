@@ -35,7 +35,8 @@ app.post("/sample", (req, res) => {
     .find()
     .toArray((err, data ) => {
       console.log(data);
-       var array1 = req.body.data.split("\n")
+       var array1 = req.body.data
+       console.log(array1);
        var array2 =[];
       data.forEach(function(item) {
         array1.forEach(function(item1){
