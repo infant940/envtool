@@ -33,18 +33,33 @@ app.post("/sample", (req, res) => {
   dbo
     .collection("infant")
     .find()
-    .toArray((err, data ) => {
-      console.log(data);
-       var array1 = req.body.data
-       console.log(array1);
-       var array2 =[];
-      data.forEach(function(item) {
-        array1.forEach(function(item1){
-          if(item.name == item1)
-            array2.push(item);
-        })
-       })
-      res.send(array2);
+    .toArray((err, data) => {
+      var fileKeyData = req.body.data;
+      var existing = [];
+      var missing = [];
+
+      data.forEach(function(dbKey) {
+        fileKeyData.forEach(function(fileKey) {
+          if (dbKey.name == fileKey) {
+            existing.push(dbKey);
+          }
+        });
+      });
+      fileKeyData.forEach(function(fileKey) {
+        let isExisting = false;
+        existing.forEach(function(existKey) {
+          if (existKey.name == fileKey) {
+            isExisting = true;
+          }
+        });
+        console.log(fileKey);
+        if (!isExisting) missing.push(fileKey);
+      });
+      var keyData = {
+        existing: existing,
+        missing: missing
+      };
+      res.send(keyData);
     });
 });
 
@@ -93,6 +108,5 @@ app.put("/envs", function(req, res) {
     }
   });
 });
-
 
 app.listen(4000, "localhost", () => console.log("Running"));
